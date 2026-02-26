@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escrow £ Dva · Beautiful Dashboard</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        /* Beautiful gradient background */
+        body {
+            min-height: 100vh;
+            background: linear-gradient(145deg, #f9f0e8 0%, #e1d9fd 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            position: relative;
+        }
+
+        /* Soft overlay effect */
+        body::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 20% 30%, rgba(255,255,240,0.3) 0%, transparent 40%),
+                        radial-gradient(circle at 90% 70%, rgba(210, 190, 255, 0.3) 0%, transparent 45%);
+            pointer-events: none;
+        }
+
+        /* Main dashboard container */
+        .dashboard {
+            width: 1300px;
+            max-width: 100%;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            border-radius: 48px;
+            box-shadow: 0 30px 60px -20px rgba(70, 40, 90, 0.3), 0 8px 20px rgba(0,0,0,0.08);
+            padding: 2.5rem 2.8rem;
+            border: 1px solid rgba(255,255,255,0.6);
+            transition: all 0.2s ease;
+        }
+
+        /* Header section */
+        .header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2.8rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-icon {
+            background: #2b1b3a;
+            color: #f5e9ff;
+            width: 58px;
+            height: 58px;
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 10px 15px -8px #a48dbb;
+        }
+
+        .brand h1 {
+            font-size: 2.1rem;
+            font-weight: 580;
+            letter-spacing: -0.02em;
+            color: #1e112b;
+        }
+
+        .brand .currency {
+            background: #fff0e0;
+            border-radius: 100px;
+            padding: 0.2rem 1rem 0.2rem 1.2rem;
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: #452e5a;
+            border: 1px solid #ffffffba;
+            backdrop-filter: blur(4px);
+            margin-left: 10px;
+        }
+
+        .deal-badge {
+            background: #ffffffc4;
+            backdrop-filter: blur(10px);
+            padding: 0.8rem 1.9rem;
+            border-radius: 60px;
+            font-weight: 530;
+            font-size: 1.1rem;
+            color: #2d1b40;
+            box-shadow: 0 4px 12px rgba(165, 140, 200, 0.15);
+            border: 1px solid #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .deal-badge i {
+            color: #7b5d9e;
+            font-size: 1.3rem;
+        }
+
+        /* Status cards grid */
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(6px);
+            border-radius: 34px;
+            padding: 1.8rem 1.5rem;
+            box-shadow: 0 18px 35px -12px rgba(125, 90, 150, 0.2);
+            border: 1px solid rgba(255,255,255,0.8);
+            transition: transform 0.2s, background 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-6px);
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .stat-title {
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: #5e4b71;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .stat-number {
+            font-size: 2.8rem;
+            font-weight: 650;
+            color: #281c34;
+            line-height: 1.1;
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-desc {
+            color: #6f5b86;
+            font-size: 0.9rem;
+            border-top: 2px dotted rgba(130, 100, 160, 0.2);
+            padding-top: 0.7rem;
+            margin-top: 0.4rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Different beautiful colors for each card */
+        .stat-card:nth-child(1) {
+            background: #fce6dc;  /* soft peach */
+        }
+        .stat-card:nth-child(2) {
+            background: #ddecf5;  /* powder blue */
+        }
+        .stat-card:nth-child(3) {
+            background: #ede1f2;  /* lavender mist */
+        }
+        .stat-card:nth-child(4) {
+            background: #dff0e4;  /* seafoam whisper */
+        }
+
+        /* Main escrow deal panel */
+        .escrow-deal-panel {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(8px);
+            border-radius: 40px;
+            padding: 2rem 2.2rem;
+            margin-bottom: 2.8rem;
+            border: 1px solid rgba(255,255,255,0.7);
+            box-shadow: 0 10px 25px -20px rgba(0,0,0,0.2);
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .panel-header h2 {
+            font-weight: 550;
+            color: #2c1d3a;
+            font-size: 1.6rem;
+        }
+
+        .pill {
+            background: #c9b0d9;
+            color: #1f0f2e;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+
+        .deal-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2.5rem;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .deal-info {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .deal-party {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: #f4ecfe;
+            padding: 0.8rem 1.7rem;
+            border-radius: 50px;
+            border: 1px solid #f7f0ff;
+        }
+
+        .party-icon {
+            background: #2b1e37;
+            color: white;
+            width: 44px;
+            height: 44px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .party-detail .label {
+            font-size: 0.8rem;
+            color: #6a4f82;
+        }
+        .party-detail .name {
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: #1f102e;
+        }
+
+        .value-box {
+            background: #e6d6fc;
+            border-radius: 60px;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1.3rem;
+        }
+
+        .value-box .amount {
+            font-size: 2.2rem;
+            font-weight: 650;
+            color: #1e0f2b;
+        }
+
+        .value-box .currency-sign {
+            font-size: 1.3rem;
+            background: #ffffffba;
+            padding: 0.4rem 0.9rem;
+            border-radius: 30px;
+        }
+
+        .progress-area {
+            min-width: 200px;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: #4b3861;
+            font-weight: 500;
+        }
+
+        .progress-bar-bg {
+            background: rgba(200, 180, 220, 0.4);
+            height: 12px;
+            border-radius: 20px;
+            width: 100%;
+            margin: 0.4rem 0 0.2rem;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            width: 73%;
+            background: linear-gradient(90deg, #aa7ec7, #7b51a0);
+            height: 12px;
+            border-radius: 20px;
+            box-shadow: 0 0 6px #bba0dc;
+        }
+
+        /* Footer grid */
+        .dashboard-footer {
+            display: grid;
+            grid-template-columns: 1.3fr 0.9fr;
+            gap: 1.8rem;
+        }
+
+        .timeline-card {
+            background: #faf3fecc;
+            backdrop-filter: blur(8px);
+            border-radius: 34px;
+            padding: 1.8rem 2rem;
+            border: 1px solid #f2e7ff;
+            background-color: #f9f0fd;
+        }
+
+        .timeline-card h3, .counterparty-card h3 {
+            display: flex;
+            gap: 0.6rem;
+            font-weight: 520;
+            color: #322341;
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .step-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .step-marker {
+            width: 38px;
+            height: 38px;
+            border-radius: 38px;
+            background: #dac5f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #2e1a41;
+            font-weight: 600;
+        }
+
+        .step-marker.done {
+            background: #3f2957;
+            color: #f0e2ff;
+        }
+
+        .step-text {
+            font-weight: 480;
+            color: #2b1b38;
+        }
+
+        .step-date {
+            margin-left: auto;
+            font-size: 0.85rem;
+            color: #7a6492;
+        }
+
+        .counterparty-card {
+            background: #f1ebf9dd;
+            backdrop-filter: blur(8px);
+            border-radius: 34px;
+            padding: 1.8rem 2rem;
+            border: 1px solid #f2e7ff;
+            background-color: #eae0fc;
+        }
+
+        .party-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            background: #ffffffaa;
+            padding: 0.9rem 1.4rem;
+            border-radius: 60px;
+            border: 1px solid white;
+        }
+
+        .party-icon-small {
+            background: #34284a;
+            color: white;
+            width: 46px;
+            height: 46px;
+            border-radius: 46px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+        }
+
+        .party-detail-small {
+            flex:1;
+        }
+
+        .role-badge {
+            background: #bca9d4;
+            padding: 0.3rem 1.2rem;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #1c0b2b;
+        }
+
+        .escrow-note {
+            margin-top: 2rem;
+            font-size: 0.9rem;
+            color: #452d60;
+            background: #e6d0ff;
+            padding: 0.9rem 1.2rem;
+            border-radius: 40px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #ffffff00, #ffffff, #ffffff00);
+            margin: 1rem 0 0.5rem;
+        }
+
+        /* Responsive design */
+        @media (max-width: 900px) {
+            .dashboard { padding: 1.8rem; }
+            .status-grid { grid-template-columns: repeat(2, 1fr); }
+            .dashboard-footer { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 550px) {
+            .status-grid { grid-template-columns: 1fr; }
+            .brand h1 { font-size: 1.6rem; }
+        }
+
+        .fa-regular, .fas, .far { color: #462f5c; }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+
+        <!-- Header -->
+        <div class="header-row">
+            <div class="brand">
+                <div class="brand-icon"><i class="fas fa-handshake"></i></div>
+                <h1>escrow <span style="font-weight:300;">|</span> £ Dva</h1>
+                <span class="currency"><i class="fa-solid fa-sterling-sign"></i> Dva stable</span>
+            </div>
+            <div class="deal-badge">
+                <i class="fas fa-shield-alt"></i> <span>Deal protection · active</span> <i class="fas fa-chevron-right" style="font-size: 0.8rem;"></i>
+            </div>
+        </div>
+
+        <!-- Status Cards -->
+        <div class="status-grid">
+            <div class="stat-card">
+                <div class="stat-title"><i class="fas fa-clock"></i> pending escrow</div>
+                <div class="stat-number">£ 12,800</div>
+                <div class="stat-desc"><span>Dva amount</span> <span>+ 2.1%</span></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title"><i class="fas fa-check-circle"></i> completed deals</div>
+                <div class="stat-number">47</div>
+                <div class="stat-desc"><span>this quarter</span> <span><i class="fa-regular fa-star"></i> 9 new</span></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title"><i class="fas fa-scale-balanced"></i> in dispute</div>
+                <div class="stat-number">2</div>
+                <div class="stat-desc"><span>under review</span> <span>£ 3.2k</span></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title"><i class="fas fa-users"></i> active parties</div>
+                <div class="stat-number">8</div>
+                <div class="stat-desc"><span>+3 this week</span> <span><i class="fa-regular fa-message"></i> 12</span></div>
+            </div>
+        </div>
+
+        <!-- Main Deal Panel -->
+        <div class="escrow-deal-panel">
+            <div class="panel-header">
+                <h2><i class="fa-solid fa-file-signature" style="margin-right: 8px;"></i>Dva deal #DV-420 · NFT acquisition</h2>
+                <span class="pill">escrow active</span>
+            </div>
+
+            <div class="deal-preview">
+                <div class="deal-info">
+                    <div class="deal-party">
+                        <div class="party-icon"><i class="fa-regular fa-user"></i></div>
+                        <div class="party-detail">
+                            <div class="label">seller</div>
+                            <div class="name">@dva_creatives</div>
+                        </div>
+                    </div>
+                    <div class="deal-party">
+                        <div class="party-icon"><i class="fa-regular fa-building"></i></div>
+                        <div class="party-detail">
+                            <div class="label">buyer</div>
+                            <div class="name">fintech_ltd</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="value-box">
+                    <span class="currency-sign">£</span>
+                    <span class="amount">8,450 Dva</span>
+                </div>
+                <div class="progress-area">
+                    <div class="progress-label">
+                        <span>milestone · 3/4</span>
+                        <span>73%</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-fill"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="dashboard-footer">
+            <!-- Timeline Card -->
+            <div class="timeline-card">
+                <h3><i class="fa-regular fa-calendar-check"></i> deal timeline (Dva escrow)</h3>
+                <div class="step-list">
+                    <div class="step-item">
+                        <div class="step-marker done"><i class="fa-regular fa-circle-check"></i></div>
+                        <span class="step-text">Terms agreed</span>
+                        <span class="step-date">Oct 12</span>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-marker done"><i class="fa-solid fa-sterling-sign"></i></div>
+                        <span class="step-text">Funds in escrow</span>
+                        <span class="step-date">Oct 14</span>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-marker"><i class="fa-regular fa-file-lines"></i></div>
+                        <span class="step-text">Inspection (Dva condition)</span>
+                        <span class="step-date">Oct 18</span>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-marker"><i class="fa-regular fa-flag"></i></div>
+                        <span class="step-text">Release to buyer</span>
+                        <span class="step-date">pending</span>
+                    </div>
+                </div>
+                <hr>
+                <div style="font-size:0.9rem; margin-top:0.8rem; color:#4d3668;"><i class="fa-regular fa-clock"></i> next: asset validation by Dva oracles</div>
+            </div>
+
+            <!-- Counterparty Card -->
+            <div class="counterparty-card">
+                <h3><i class="fa-regular fa-handshake"></i> escrow parties</h3>
+                <div class="party-row">
+                    <div class="party-icon-small"><i class="fa-regular fa-user"></i></div>
+                    <div class="party-detail-small">
+                        <strong>Alicia V.</strong> <span style="color:#4d3369;">(seller)</span>
+                        <div style="font-size:0.8rem;">Dva verified · 4.9</div>
+                    </div>
+                    <span class="role-badge">counterparty</span>
+                </div>
+                <div class="party-row">
+                    <div class="party-icon-small"><i class="fa-regular fa-user"></i></div>
+                    <div class="party-detail-small">
+                        <strong>Marcus Feng</strong> <span style="color:#4d3369;">(buyer)</span>
+                        <div style="font-size:0.8rem;">Dva prime · 5 deals</div>
+                    </div>
+                    <span class="role-badge">buyer</span>
+                </div>
+                <div class="party-row">
+                    <div class="party-icon-small"><i class="fa-regular fa-bank"></i></div>
+                    <div class="party-detail-small">
+                        <strong>Dva escrow</strong> <span style="color:#4d3369;">(agent)</span>
+                        <div style="font-size:0.8rem;">multisig · 2/3</div>
+                    </div>
+                    <span class="role-badge">custody</span>
+                </div>
+                <div class="escrow-note">
+                    <i class="fa-solid fa-lock" style="color:#2e1d40;"></i>
+                    <span>Funds protected by Dva smart contract · release pending both signatures</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer note -->
+        <div style="margin-top: 2rem; text-align: right; font-size: 0.85rem; color: #5d4977; border-top: 2px solid rgba(255,255,255,0.5); padding-top: 1rem;">
+            <i class="fa-regular fa-circle-check"></i> escrow £ Dva — deal dashboard · background colors reflect realtime status
+        </div>
+    </div>
+</body>
+</html>
